@@ -2,6 +2,7 @@
 Classes related to AUTOSAR XML Elements
 """
 
+import uuid
 import re
 from collections.abc import Iterable, Iterator
 from typing import Any, Union
@@ -1529,6 +1530,7 @@ class Unit(ARElement):
                  display_name: str | SingleLanguageUnitNames | None = None,
                  factor: float | None = None,
                  offset: float | None = None,
+                 uuid_str: str | None = None,
                  physical_dimension_ref: str | PhysicalDimensionRef | None = None,
                  **kwargs: dict) -> None:
         super().__init__(name, **kwargs)
@@ -1536,6 +1538,10 @@ class Unit(ARElement):
         self.physical_dimension_ref: PhysicalDimensionRef | None = None  # .PHYSICAL-DIMENSION-REF
         self.factor: float | None = None  # .FACTOR-SI-TO-UNIT
         self.offset: float | None = None  # .OFFSET-SI-TO-UNIT
+        if uuid_str is None:
+            self.uuid = uuid.uuid4()
+        else:
+            self.uuid = uuid_str
         if display_name is not None:
             if isinstance(display_name, str):
                 self.display_name = SingleLanguageUnitNames(display_name)
@@ -1552,6 +1558,7 @@ class Unit(ARElement):
                 raise TypeError(f"physical_dimension_ref: Invalid type '{str(type(physical_dimension_ref))}'")
         self._assign_optional('factor', factor, float)
         self._assign_optional('offset', offset, float)
+        self._assign_optional('uuid', uuid_str, str)
 
     def ref(self) -> UnitRef:
         """

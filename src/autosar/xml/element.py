@@ -228,7 +228,7 @@ class Identifiable(MultiLanguageReferrable):
                  name: str,
                  desc: Union["MultiLanguageOverviewParagraph", tuple[ar_enum.Language, str], str, None] = None,
                  category: str | None = None,
-                 uuid: str | None = None,
+                 uuid_str: str | None = None,
                  admin_data: Union["AdminData", None] = None,
                  **kwargs) -> None:
         super().__init__(name, **kwargs)
@@ -237,7 +237,11 @@ class Identifiable(MultiLanguageReferrable):
         self.admin_data = None
         self.introduction = None
         self.annotations = None
-        self.uuid = None
+        # self.uuid = None
+        if uuid_str is None:
+            self.uuid = uuid.uuid4().hex
+        else:
+            self.uuid = uuid_str
         self.admin_data: Union["AdminData", None] = None
         if desc is not None:
             if isinstance(desc, MultiLanguageOverviewParagraph):
@@ -249,7 +253,7 @@ class Identifiable(MultiLanguageReferrable):
             else:
                 raise TypeError(f"Invalid type for argument 'desc': {str(type(desc))}")
         self._assign_optional('category', category, str)
-        self._assign_optional('uuid', uuid, str)
+        self._assign_optional('uuid', uuid_str, str)
 
     def update_ref_parts(self, ref_parts: list[str]):
         """
@@ -1539,7 +1543,7 @@ class Unit(ARElement):
         self.factor: float | None = None  # .FACTOR-SI-TO-UNIT
         self.offset: float | None = None  # .OFFSET-SI-TO-UNIT
         if uuid_str is None:
-            self.uuid = uuid.uuid4()
+            self.uuid = uuid.uuid4().hex
         else:
             self.uuid = uuid_str
         if display_name is not None:
